@@ -8,7 +8,9 @@ API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}" if BOT_TOKEN else None
 
 
 def _escape(text: str) -> str:
-    return text.replace("_", "\\_").replace("*", "\\*").replace("[", "\\[").replace("`", "\\`")
+    for ch in ["_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!"]:
+        text = text.replace(ch, f"\\{ch}")
+    return text
 
 
 async def send_alert(token: TokenInfo) -> bool:
