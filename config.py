@@ -24,7 +24,7 @@ class ScreeningConfig:
     track_smart_wallets: bool = True
     min_smart_wallets: int = 1
     # chain
-    chains: list[str] = field(default_factory=lambda: ["solana", "bsc", "ethereum", "base"])
+    chains: list[str] = field(default_factory=lambda: ["solana"])
     # polling
     poll_interval_seconds: int = 30
     new_token_window_minutes: int = 5
