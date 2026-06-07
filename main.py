@@ -4,7 +4,7 @@ import sys
 from datetime import datetime, timezone
 
 try:
-    UTC = UTC
+    UTC = timezone.UTC
 except AttributeError:
     UTC = timezone.utc
 from rich.console import Console
