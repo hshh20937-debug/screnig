@@ -1,6 +1,11 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
+
+try:
+    UTC = timezone.UTC
+except AttributeError:
+    UTC = timezone.utc
 
 
 @dataclass
@@ -9,7 +14,7 @@ class TokenInfo:
     chain: str
     symbol: str
     name: str
-    created_at: Optional[datetime] = None
+    created_at: Optional[int] = None
     liquidity_usd: float = 0.0
     market_cap_usd: float = 0.0
     price_usd: float = 0.0
@@ -37,5 +42,6 @@ class TokenInfo:
     def age_hours(self) -> Optional[float]:
         if self.created_at is None:
             return None
-        delta = datetime.utcnow() - self.created_at
-        return delta.total_seconds() / 3600
+        now = datetime.now(UTC).timestamp() * 1000
+        delta_ms = now - self.created_at
+        return delta_ms / 3600000
