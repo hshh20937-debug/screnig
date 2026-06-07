@@ -4,6 +4,8 @@ from config import SCREENING_CFG
 
 def passes_liquidity(token: TokenInfo) -> tuple[bool, str]:
     liq = token.liquidity_usd
+    if SCREENING_CFG.skip_liquidity_if_zero and liq == 0:
+        return True, "skip (bonding curve)"
     if liq < SCREENING_CFG.liquidity_min:
         return False, f"Liquidity ${liq:.0f} < ${SCREENING_CFG.liquidity_min:,.0f}"
     if liq > SCREENING_CFG.liquidity_max:
@@ -29,6 +31,8 @@ def passes_age(token: TokenInfo) -> tuple[bool, str]:
 
 def passes_holder_count(token: TokenInfo) -> tuple[bool, str]:
     h = token.holder_count
+    if h == 0:
+        return True, "unknown"
     if h < SCREENING_CFG.min_holders:
         return False, f"Holders {h} < {SCREENING_CFG.min_holders}"
     return True, "ok"
