@@ -1,7 +1,12 @@
 import asyncio
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
+
+try:
+    UTC = UTC
+except AttributeError:
+    UTC = timezone.utc
 from rich.console import Console
 from rich.table import Table
 from config import SCREENING_CFG
@@ -25,7 +30,7 @@ seen_tokens: set[str] = set()
 
 
 def build_table(tokens: list[TokenInfo]) -> Table:
-    table = Table(title=f"Meme Coin Screener — {datetime.utcnow().strftime('%H:%M:%S UTC')}")
+    table = Table(title=f"Meme Coin Screener — {datetime.now(UTC).strftime('%H:%M:%S UTC')}")
     table.add_column("Token", style="cyan")
     table.add_column("Chain", style="blue")
     table.add_column("Liq $", justify="right")
@@ -167,7 +172,7 @@ async def screening_loop():
     while True:
         try:
             cycle += 1
-            now = datetime.utcnow().strftime("%H:%M:%S")
+            now = datetime.now(UTC).strftime("%H:%M:%S")
             total_pairs = 0
 
             for chain in SCREENING_CFG.chains:
