@@ -162,22 +162,28 @@ async def screening_loop():
     console.print(f"[dim]Telegram: {'✅ configured' if has_telegram else '❌ not set'}[/]\n")
 
     flagged_tokens: list[TokenInfo] = []
+    cycle = 0
 
     while True:
         try:
+            cycle += 1
+            now = datetime.utcnow().strftime("%H:%M:%S")
+            total_pairs = 0
+
             for chain in SCREENING_CFG.chains:
                 pairs = await get_new_pairs(chain)
+                total_pairs += len(pairs)
                 tasks = [process_token(p) for p in pairs]
                 results = await asyncio.gather(*tasks)
                 for r in results:
                     if r:
                         flagged_tokens.append(r)
 
+            console.print(f"[dim][{now}] Cycle #{cycle} — {total_pairs} new pairs checked | "
+                          f"Flagged: {len(flagged_tokens)}[/]")
+
             if flagged_tokens:
-                console.clear()
                 console.print(build_table(flagged_tokens[-20:]))
-                console.print(f"\n[dim]Total flagged: {len(flagged_tokens)} | "
-                              f"Scanning every {SCREENING_CFG.poll_interval_seconds}s[/]")
 
             await asyncio.sleep(SCREENING_CFG.poll_interval_seconds)
 
